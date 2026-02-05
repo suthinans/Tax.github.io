@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรแกรมคำนวณภาษีเงินได้ | Thai Tax Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <main class="container">
+        <header class="header">
+            <h1>คำนวณภาษีเงินได้</h1>
+            <p>วางแผนภาษีง่ายๆ รู้ทันทีว่าต้องจ่ายเท่าไหร่</p>
+        </header>
+
+        <div class="calculator-card glass-panel">
+            <form id="taxForm">
+                <!-- Section 1: Income -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <div class="icon-box">
+                            <i data-lucide="wallet"></i>
+                        </div>
+                        <h2>ข้อมูลรายได้ (Income)</h2>
+                    </div>
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label for="salary">เงินเดือน (ทั้งปี)</label>
+                            <div class="input-wrapper">
+                                <span class="currency">฿</span>
+                                <input type="number" id="salary" placeholder="0" min="0">
+                            </div>
+                            <span class="hint">รวมโบนัสและเงินได้อื่นๆ ที่ได้รับจากนายจ้าง</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="otherIncome">รายได้อื่นๆ (ทั้งปี)</label>
+                            <div class="input-wrapper">
+                                <span class="currency">฿</span>
+                                <input type="number" id="otherIncome" placeholder="0" min="0">
+                            </div>
+                            <span class="hint">เช่น ค่าจ้างทำของ, ค่าลิขสิทธิ์, เงินปันผล</span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="divider"></div>
+
+                <!-- Section 2: Expenses -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <div class="icon-box">
+                            <i data-lucide="shopping-bag"></i>
+                        </div>
+                        <h2>ค่าใช้จ่าย (Expenses)</h2>
+                    </div>
+                    <div class="input-group">
+                        <label for="expenses">หักค่าใช้จ่ายรวม</label>
+                        <div class="input-wrapper">
+                            <span class="currency">฿</span>
+                            <input type="number" id="expenses" placeholder="คำนวณอัตโนมัติ (แก้ไขได้)" min="0">
+                        </div>
+                        <span class="hint">ปกติระบบจะช่วยคำนวณให้ตามกฎหมาย <button type="button" class="text-btn"
+                                id="autoCalcExpenses">คำนวณอัตโนมัติ</button></span>
+                    </div>
+                </section>
+
+                <div class="divider"></div>
+
+                <!-- Section 3: Deductions -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <div class="icon-box">
+                            <i data-lucide="shield-check"></i>
+                        </div>
+                        <h2>ค่าลดหย่อน (Deductions)</h2>
+                    </div>
+
+
+                    <!-- General Group -->
+                    <h3 class="subsection-title">ทั่วไป (General)</h3>
+                    <div class="deduction-grid" style="margin-bottom: 2rem;">
+                        <div class="input-group">
+                            <label>ส่วนตัว (ผู้มีเงินได้)</label>
+                            <div class="input-wrapper disabled">
+                                <span class="currency">฿</span>
+                                <input type="number" value="60000" disabled>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Family Group -->
+                    <h3 class="subsection-title">ครอบครัว (Family)</h3>
+                    <div class="family-grid">
+                        <!-- Spouse -->
+                        <div class="selection-card" id="cardSpouse">
+                            <input type="checkbox" id="spouseCheck" hidden>
+                            <div class="card-icon"><i data-lucide="heart"></i></div>
+                            <div class="card-info">
+                                <h4>คู่สมรส (ไร้เงินได้)</h4>
+                                <p>ลดหย่อน 60,000฿</p>
+                            </div>
+                            <div class="check-indicator"><i data-lucide="check"></i></div>
+                        </div>
+
+                        <!-- Children -->
+                        <div class="counter-card">
+                            <div class="card-icon"><i data-lucide="baby"></i></div>
+                            <div class="card-info">
+                                <h4>บุตร</h4>
+                                <p>คนละ 30,000฿</p>
+                            </div>
+                            <div class="counter-control">
+                                <button type="button" class="counter-btn"
+                                    onclick="updateCounter('childCount', -1)">-</button>
+                                <input type="number" id="childCount" value="0" readonly>
+                                <button type="button" class="counter-btn"
+                                    onclick="updateCounter('childCount', 1)">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Parents -->
+                        <div class="parents-group">
+                            <h4>อุปการะบิดา-มารดา (อายุ 60+)</h4>
+                            <div class="parents-options">
+                                <label class="checkbox-btn">
+                                    <input type="checkbox" id="fatherCheck">
+                                    <span class="btn-label"><i data-lucide="user"></i> บิดา</span>
+                                </label>
+                                <label class="checkbox-btn">
+                                    <input type="checkbox" id="motherCheck">
+                                    <span class="btn-label"><i data-lucide="user"></i> มารดา</span>
+                                </label>
+                            </div>
+                            <div class="hint-text">*ต้องไม่มีเงินได้ในปีภาษีเกิน 30,000 บ.</div>
+                        </div>
+                    </div>
+
+                    <div class="divider-sm"></div>
+
+                    <h3 class="subsection-title">ประกันและการออม (Insurance & Savings)</h3>
+                    <div class="deduction-grid">
+
+                        <div class="input-group">
+                            <label for="socialSecurity">ประกันสังคม</label>
+                            <div class="input-wrapper">
+                                <span class="currency">฿</span>
+                                <input type="number" id="socialSecurity" placeholder="สูงสุด 9,000" max="9000">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="lifeInsurance">เบี้ยประกันชีวิต</label>
+                            <div class="input-wrapper">
+                                <span class="currency">฿</span>
+                                <input type="number" id="lifeInsurance" placeholder="สูงสุด 100,000">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="providentFund">กองทุนสำรองเลี้ยงชีพ / กบข.</label>
+                            <div class="input-wrapper">
+                                <span class="currency">฿</span>
+                                <input type="number" id="providentFund" placeholder="ส่วนที่สะสมเพิ่ม">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="otherDeduction">ลดหย่อนอื่นๆ รวม</label>
+                            <div class="input-wrapper">
+                                <span class="currency">฿</span>
+                                <input type="number" id="otherDeduction" placeholder="เช่น บุพการี, RMF, SSF">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="action-area">
+                    <button type="button" id="calculateBtn" class="btn-primary">
+                        <span class="btn-text">คำนวณภาษี</span>
+                        <i data-lucide="calculator"></i>
+                    </button>
+                    <button type="button" id="resetBtn" class="btn-secondary">
+                        <i data-lucide="rotate-ccw"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Result Section -->
+        <div id="resultCard" class="result-card glass-panel hidden">
+            <div class="result-header">
+                <h2>สรุปภาษีที่ต้องจ่าย</h2>
+                <div class="tax-yearBadge">ปีภาษี 2567</div>
+            </div>
+
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span>เงินได้สุทธิ</span>
+                    <strong id="netIncomeDisplay">0.00</strong>
+                </div>
+                <div class="summary-item highlight">
+                    <span>ภาษีที่ต้องชำระ</span>
+                    <strong id="taxPayableDisplay">0.00</strong>
+                </div>
+            </div>
+
+            <div class="tax-breakdown">
+                <div class="breakdown-header">
+                    <span>ขั้นเงินได้สุทธิ</span>
+                    <span>อัตราภาษี</span>
+                    <span>ภาษี</span>
+                </div>
+                <div class="breakdown-list" id="taxBreakdownList">
+                    <!-- Dynamic Items -->
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="script.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
