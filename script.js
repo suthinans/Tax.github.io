@@ -177,7 +177,7 @@ document.getElementById('calculateBtn').addEventListener('click', () => {
             <div class="breakdown-item ${isActive ? 'active' : ''}">
                 <div>${rangeLabel}</div>
                 <div>${(bracket.rate * 100).toFixed(0)}%</div>
-                <div>${isActive ? formatMoney(taxInBracket) : '-'}</div>
+                <div>${isActive ? formatMoney(taxInBracket) + ' บาท' : '-'}</div>
             </div>
         `);
 
@@ -194,7 +194,7 @@ document.getElementById('calculateBtn').addEventListener('click', () => {
     const finalTaxDue = taxPayable - withholdingTax;
 
     // 8. Display Results
-    document.getElementById('netIncomeDisplay').innerText = formatMoney(netIncome);
+    document.getElementById('netIncomeDisplay').innerText = formatMoney(netIncome) + " บาท";
 
     // Update Result Card for Refund/Due
     const taxLabel = document.querySelector('.summary-item.highlight span');
@@ -207,12 +207,12 @@ document.getElementById('calculateBtn').addEventListener('click', () => {
     if (finalTaxDue < 0) {
         // Refund
         taxLabel.innerText = "ภาษีที่ชำระเกิน (ขอคืนได้)";
-        taxValue.innerText = formatMoney(Math.abs(finalTaxDue));
+        taxValue.innerText = formatMoney(Math.abs(finalTaxDue)) + " บาท";
         taxValue.style.color = "#10b981"; // Green
     } else {
         // Must Pay
         taxLabel.innerText = "ภาษีที่ต้องชำระเพิ่ม";
-        taxValue.innerText = formatMoney(finalTaxDue);
+        taxValue.innerText = formatMoney(finalTaxDue) + " บาท";
         taxValue.style.color = "#ef4444"; // Red
         if (Math.abs(finalTaxDue) < 0.01) {
             taxValue.style.color = "#4f46e5";
